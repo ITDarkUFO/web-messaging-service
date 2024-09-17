@@ -1,22 +1,26 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using WebServer.Models;
 
 namespace WebServer.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
-    public class MessagesController : Controller
+    [Route("messenger")]
+    public class MessagesController : ControllerBase
     {
-        [HttpGet]
+        [HttpGet("get")]
         public async Task<IActionResult> GetMessages(DateTime startDate, DateTime endDate)
         {
-            return Ok();
+            return Ok("Заглушка");
         }
 
-        [HttpPost]
+        [HttpPost("send")]
         public async Task<IActionResult> SendMessage(ChatMessage message)
         {
-            return Ok();
+            if (ModelState.IsValid)
+                return Ok();
+            else
+                return BadRequest(ModelState.ValidationState);
         }
     }
 }

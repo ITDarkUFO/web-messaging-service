@@ -3,5 +3,6 @@
     public class MessagesRepository
     {
         private readonly string _connectionString;
+
     }
 }
