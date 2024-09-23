@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace WebServer.Models
 {
@@ -7,14 +6,18 @@ namespace WebServer.Models
     {
         public int Id { get; set; }
 
-        [Required(ErrorMessage = "Сообщение не может быть пустым")]
-        [StringLength(128, ErrorMessageResourceName = "LengthError", ErrorMessageResourceType = typeof(WebServer.Resources.SharedResource))]
+        [Required(ErrorMessageResourceName = "RequiredError",
+            ErrorMessageResourceType = typeof(Resources.SharedResources))]
+        [StringLength(128, ErrorMessageResourceName = "MessageText_LengthError",
+            ErrorMessageResourceType = typeof(Resources.Models.ChatMessage))]
         public string MessageText { get; set; } = default!;
 
         public DateTime MessageTimestamp { get; set; }
 
-        [Required]
-        [Range(0, int.MaxValue, ErrorMessageResourceName = "RangeError")]
+        [Required(ErrorMessageResourceName = "RequiredError",
+            ErrorMessageResourceType = typeof(Resources.SharedResources))]
+        [Range(0, int.MaxValue, ErrorMessageResourceName = "RangeError",
+            ErrorMessageResourceType = typeof(Resources.SharedResources))]
         public int? MessageIndex { get; set; }
     }
 }
