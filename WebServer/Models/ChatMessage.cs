@@ -18,6 +18,6 @@ namespace WebServer.Models
             ErrorMessageResourceType = typeof(Resources.SharedResources))]
         [Range(0, int.MaxValue, ErrorMessageResourceName = "RangeError",
             ErrorMessageResourceType = typeof(Resources.SharedResources))]
-        public int? MessageIndex { get; set; }
+        public int MessageIndex { get; set; } = default!;
     }
 }

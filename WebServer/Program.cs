@@ -2,10 +2,14 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using System.Reflection;
+using WebServer.Repositories;
 using WebServer.Resources;
 using static System.Net.Mime.MediaTypeNames;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
 
 builder.Services.AddControllers()
     .AddMvcLocalization()
@@ -34,7 +38,12 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 
-//builder.Services.AddSingleton<>
+builder.Services.AddScoped(sp =>
+{
+    var loggerFactory = sp.GetRequiredService<ILoggerFactory>();
+
+    return new MessagesRepository(loggerFactory, "Host=192.168.0.101;Username=postgres;Password=postgres;Database=web-messaging-service");
+});
 
 var app = builder.Build();
 

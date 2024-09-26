@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS messages (
-    id INTEGER PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     messagetext VARCHAR(128) NOT NULL,
     messageTimestamp TIMESTAMP,
     MessageIndex INTEGER NOT NULL
