@@ -1,9 +1,10 @@
 ﻿using Npgsql;
+using WebServer.DTOs;
 using WebServer.Models;
 
 namespace WebServer.Repositories
 {
-    public class MessagesRepository 
+    public class MessagesRepository
     {
         private readonly ILogger<MessagesRepository> _logger;
 
@@ -22,10 +23,9 @@ namespace WebServer.Repositories
             _dataSource = _dataSourceBuilder.Build();
         }
 
-
-        public async Task<List<ChatMessage>> GetMessages(DateTime startDate, DateTime endDate)
+        public async Task<List<ChatMessageDTO>> GetMessages(DateTime startDate, DateTime endDate)
         {
-            List<ChatMessage> messages = [];
+            List<ChatMessageDTO> messages = [];
 
             using var connection = await _dataSource.OpenConnectionAsync();
             using var command = _dataSource
@@ -40,7 +40,6 @@ namespace WebServer.Repositories
             {
                 messages.Add(new()
                 {
-                    Id = reader.GetInt32(0),
                     MessageText = reader.GetString(1),
                     MessageTimestamp = reader.GetDateTime(2),
                     MessageIndex = reader.GetInt32(3)
@@ -51,7 +50,7 @@ namespace WebServer.Repositories
             return messages;
         }
 
-        public async Task<ChatMessage> SendMessage(ChatMessage message)
+        public async Task SendMessage(ChatMessage message)
         {
             using var connection = await _dataSource.OpenConnectionAsync();
             using var command = _dataSource
@@ -67,13 +66,12 @@ namespace WebServer.Repositories
             }
             catch (Exception ex)
             {
-                _logger.LogCritical(ex, $"Возникла неизвестная ошибка {0}", ex.InnerException);
+                _logger.LogCritical(ex, "Возникла неизвестная ошибка при выполнении команды");
                 throw;
             }
 
             await connection.CloseAsync();
-            
-            return message;
+            return;
         }
     }
 }
