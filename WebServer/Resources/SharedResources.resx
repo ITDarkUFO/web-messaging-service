@@ -129,4 +129,7 @@
   <data name="ValidationErrorDetails" xml:space="preserve">
     <value>Please check the entered data and try again.</value>
   </data>
+  <data name="DbCommandExecutionError" xml:space="preserve">
+    <value>An unknown error occurred while executing the command.</value>
+  </data>
 </root>

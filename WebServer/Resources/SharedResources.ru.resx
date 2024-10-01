@@ -129,4 +129,7 @@
   <data name="ValidationErrorDetails" xml:space="preserve">
     <value>Пожалуйста, проверьте введенные данные и повторите попытку.</value>
   </data>
+  <data name="DbCommandExecutionError" xml:space="preserve">
+    <value>Возникла неизвестная ошибка при выполнении команды.</value>
+  </data>
 </root>

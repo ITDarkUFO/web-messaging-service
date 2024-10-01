@@ -29,7 +29,7 @@ builder.Services.AddControllers()
 
             return new BadRequestObjectResult(validationProblemDetails)
             {
-                ContentTypes = { Application.ProblemJson },
+                ContentTypes = { Application.ProblemJson }
             };
         };
     });
@@ -38,12 +38,24 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 
-builder.Services.AddScoped(sp =>
-{
-    var loggerFactory = sp.GetRequiredService<ILoggerFactory>();
+var connectionString = Environment.GetEnvironmentVariable("ASPNETCORE_WEBSERVER_CONNECTIONSTRING");
 
-    return new MessagesRepository(loggerFactory, "Host=192.168.0.101;Username=postgres;Password=postgres;Database=web-messaging-service");
-});
+if (string.IsNullOrEmpty(connectionString))
+{
+    throw new InvalidOperationException("Строка подключения не найдена. Убедитесь, что переменная окружения 'ASPNETCORE_WEBSERVER_CONNECTIONSTRING' задана.");
+}
+
+builder.Services
+    .AddNpgsqlDataSource(connectionString,
+        sb =>
+        {
+            sb.UseLoggerFactory(LoggerFactory.Create(loggingBuilder => loggingBuilder.AddConsole()));
+
+            if (builder.Environment.IsDevelopment())
+                sb.EnableParameterLogging();
+        });
+
+builder.Services.AddScoped<MessagesRepository>();
 
 var app = builder.Build();
 

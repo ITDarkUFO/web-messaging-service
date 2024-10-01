@@ -1,27 +1,14 @@
 ﻿using Npgsql;
 using WebServer.DTOs;
 using WebServer.Models;
+using WebServer.Resources;
 
 namespace WebServer.Repositories
 {
-    public class MessagesRepository
+    public class MessagesRepository(ILogger<MessagesRepository> logger, NpgsqlDataSource dataSource)
     {
-        private readonly ILogger<MessagesRepository> _logger;
-
-        private readonly string _connectionString;
-        private readonly NpgsqlDataSourceBuilder _dataSourceBuilder;
-        private readonly NpgsqlDataSource _dataSource;
-
-        public MessagesRepository(ILoggerFactory loggerFactory, string connectionString)
-        {
-            _logger = loggerFactory.CreateLogger<MessagesRepository>();
-
-            _connectionString = connectionString;
-            _dataSourceBuilder = new NpgsqlDataSourceBuilder(_connectionString);
-            _dataSourceBuilder.UseLoggerFactory(loggerFactory);
-
-            _dataSource = _dataSourceBuilder.Build();
-        }
+        private readonly ILogger<MessagesRepository> _logger = logger;
+        private readonly NpgsqlDataSource _dataSource = dataSource;
 
         public async Task<List<ChatMessageDTO>> GetMessages(DateTime startDate, DateTime endDate)
         {
@@ -66,7 +53,7 @@ namespace WebServer.Repositories
             }
             catch (Exception ex)
             {
-                _logger.LogCritical(ex, "Возникла неизвестная ошибка при выполнении команды");
+                _logger.LogCritical(ex, SharedResources.DbCommandExecutionError);
                 throw;
             }
 

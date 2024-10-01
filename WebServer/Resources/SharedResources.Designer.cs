@@ -61,6 +61,15 @@ namespace WebServer.Resources {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на An unknown error occurred while executing the command..
+        /// </summary>
+        public static string DbCommandExecutionError {
+            get {
+                return ResourceManager.GetString("DbCommandExecutionError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на {0} must be greater than {1} and less than {2}..
         /// </summary>
         public static string RangeError {
