@@ -1,0 +1,17 @@
+﻿@WebServer_HostAddress = https://localhost:7061
+
+POST {{WebServer_HostAddress}}/messages HTTP/1.1
+Content-Type: application/json
+{
+    "messageText": "Sample text",
+    "messageIndex": 0
+}
+
+###
+
+@StartDate = {{$datetime "MM-dd-yyyy" -1 d}}
+@EndDate = {{$datetime "MM-dd-yyyy" 1 d}}
+
+GET {{WebServer_HostAddress}}/messages?startDate={{StartDate}}&endDate={{EndDate}} HTTP/1.1
+
+###

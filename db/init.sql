@@ -3,5 +3,5 @@ CREATE TABLE IF NOT EXISTS messages (
     messagetext VARCHAR(128) NOT NULL,
     messageTimestamp TIMESTAMP,
     MessageIndex INTEGER NOT NULL
-    CONSTRAINT chk_positive_index CHECK (MessageIndex > 0)
+    CONSTRAINT chk_positive_index CHECK (MessageIndex >= 0)
 )
