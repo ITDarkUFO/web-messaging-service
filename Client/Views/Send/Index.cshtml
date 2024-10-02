@@ -1,0 +1,32 @@
+﻿
+<h1>Отправка сообщений</h1>
+
+<form method="post" action="@ViewData["URL"]/messages" enctype="multipart/form-data">
+    <input hidden type="number" name="MessageIndex" value="0" />
+    <input type="text" name="MessageText" />
+    <button action="submit">Отправить</button>
+</form>
+
+<script>
+    ///<reference path="../../wwwroot/lib/jquery/dist/jquery.js" />
+    $("form").on("submit", (function (e) {
+        console.log($(this).attr("action"));
+        console.log($(this).serialize());
+
+        $.ajax({
+            type: "post",
+            url: $(this).attr("action"),
+            crossDomain: true,
+            data: $(this).serialize(),
+            dataType: "multipart/form-data",
+            success: function (response) {
+
+            },
+            error: function (response) {
+                console.log(JSON.parse(response.responseText));
+            },
+        });
+
+        e.preventDefault();
+    }));
+</script>

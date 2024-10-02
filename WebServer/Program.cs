@@ -57,6 +57,15 @@ builder.Services
 
 builder.Services.AddScoped<MessagesRepository>();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllCors",
+                      builder =>
+                      {
+                          builder.AllowAnyOrigin();
+                      });
+});
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -74,6 +83,8 @@ var localizationOptions = new RequestLocalizationOptions()
 app.UseRequestLocalization(localizationOptions);
 
 app.UseHttpsRedirection();
+
+app.UseCors("AllCors");
 
 app.UseAuthorization();
 

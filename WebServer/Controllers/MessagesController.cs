@@ -19,7 +19,7 @@ namespace WebServer.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> SendMessage([Bind("MessageText, MessageTimestamp, MessageIndex")] ChatMessage message)
+        public async Task<IActionResult> SendMessage([FromForm, Bind("MessageText, MessageIndex")] ChatMessage message)
         {
             if (ModelState.IsValid)
             {
