@@ -1,7 +1,7 @@
 ﻿using Npgsql;
-using WebServer.DTOs;
-using WebServer.Models;
-using WebServer.Resources;
+using SharedLibrary.Models;
+using SharedLibrary.DTOs;
+using SharedLibrary.Resources;
 
 namespace WebServer.Repositories
 {
@@ -37,14 +37,15 @@ namespace WebServer.Repositories
             return messages;
         }
 
-        public async Task SendMessage(ChatMessage message)
+        public async Task<DateTime> SendMessage(ChatMessage message)
         {
             using var connection = await _dataSource.OpenConnectionAsync();
             using var command = _dataSource
                 .CreateCommand("INSERT INTO messages (messagetext, messagetimestamp, messageindex) VALUES (@messageText, @messageTime, @messageIndex);");
 
+            var sendingTime = DateTime.Now;
+            command.Parameters.AddWithValue("messageTime", NpgsqlTypes.NpgsqlDbType.Timestamp, sendingTime);
             command.Parameters.AddWithValue("messageText", NpgsqlTypes.NpgsqlDbType.Text, message.MessageText);
-            command.Parameters.AddWithValue("messageTime", NpgsqlTypes.NpgsqlDbType.Timestamp, DateTime.Now);
             command.Parameters.AddWithValue("messageIndex", NpgsqlTypes.NpgsqlDbType.Integer, message.MessageIndex);
 
             try
@@ -58,7 +59,7 @@ namespace WebServer.Repositories
             }
 
             await connection.CloseAsync();
-            return;
+            return sendingTime;
         }
     }
 }

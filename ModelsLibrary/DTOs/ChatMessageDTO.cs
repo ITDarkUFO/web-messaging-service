@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace WebServer.DTOs
+﻿namespace SharedLibrary.DTOs
 {
     public class ChatMessageDTO
     {

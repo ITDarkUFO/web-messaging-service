@@ -1,29 +1,61 @@
-﻿
-<h1>Отправка сообщений</h1>
+﻿@model SharedLibrary.Models.ChatMessage
 
-<form method="post" action="@ViewData["URL"]/messages" enctype="multipart/form-data">
-    <input hidden type="number" name="MessageIndex" value="0" />
-    <input type="text" name="MessageText" />
-    <button action="submit">Отправить</button>
-</form>
+<div class="row">
+    <div class="col-6">
+        <h1>Отправка сообщений</h1>
+        <form method="post" action="@ViewData["URL"]/messages" enctype="multipart/form-data">
+            <input hidden asp-for="MessageIndex" value="0" class="form-control" />
+            <div class="form-floating mb-2">
+                <textarea asp-for="MessageText" class="form-control" placeholder="Введите сообщение"></textarea>
+                <label asp-for="MessageText">Введите сообщение</label>
+            </div>
+            <div class="col-auto d-flex align-items-center justify-content-end">
+                <button id="submitButton" action="submit" class="btn btn-primary">Отправить</button>
+                <div id="submitSpinner" style="display: none;" class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Отправка...</span>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="col-6">
+        <h1>История сообщений</h1>
+        <div id="messageHistory">
+        </div>
+    </div>
+</div>
 
 <script>
     ///<reference path="../../wwwroot/lib/jquery/dist/jquery.js" />
     $("form").on("submit", (function (e) {
-        console.log($(this).attr("action"));
-        console.log($(this).serialize());
-
         $.ajax({
             type: "post",
             url: $(this).attr("action"),
             crossDomain: true,
             data: $(this).serialize(),
-            dataType: "multipart/form-data",
+            beforeSend: function () {
+                $("#submitButton").hide();
+                $("#submitSpinner").show();
+            },
             success: function (response) {
+                setTimeout(() => {
+                    $("#submitButton").show();
+                    $("#submitSpinner").hide();
+                }, 300);
+                
+                $("#messageHistory").append(`<div class="card mb-2"><div class="card-header">${Date(response)} &ndash; ${$("#MessageIndex").val()}</div><div class="card-body">${$("#MessageText").val()}</div></div>`);
 
+                var newIndex = parseInt($("#MessageIndex").val()) + 1;
+
+                $("#MessageIndex").val(newIndex);
+                $("#MessageText").val(null);
             },
             error: function (response) {
                 console.log(JSON.parse(response.responseText));
+
+                setTimeout(() => {
+                    $("#submitButton").show();
+                    $("#submitSpinner").hide();
+                }, 300);
             },
         });
 

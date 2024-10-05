@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
-using WebServer.Models;
+using SharedLibrary.Models;
 using WebServer.Repositories;
 
 namespace WebServer.Controllers
@@ -23,8 +23,8 @@ namespace WebServer.Controllers
         {
             if (ModelState.IsValid)
             {
-                await _messagesRepository.SendMessage(message);
-                return Ok();
+                var sendingTime = await _messagesRepository.SendMessage(message);
+                return Ok(sendingTime);
             }
             else
                 return BadRequest(ModelState.ValidationState);
