@@ -2,31 +2,45 @@
 
 <div class="row">
     <div class="col-6">
-        <h1>Отправка сообщений</h1>
-        <form method="post" action="@ViewData["URL"]/messages" enctype="multipart/form-data">
+        <h1 class="display-5">Отправка сообщений</h1>
+        <form method="post" action="@ViewData["URL"]/messages?culture=ru" enctype="multipart/form-data">
             <input hidden asp-for="MessageIndex" value="0" class="form-control" />
             <div class="form-floating mb-2">
-                <textarea asp-for="MessageText" class="form-control" placeholder="Введите сообщение"></textarea>
+                <textarea asp-for="MessageText" required maxlength="128" class="form-control" style="min-height: 8em; resize: none;" placeholder="Введите сообщение"></textarea>
                 <label asp-for="MessageText">Введите сообщение</label>
             </div>
-            <div class="col-auto d-flex align-items-center justify-content-end">
-                <button id="submitButton" action="submit" class="btn btn-primary">Отправить</button>
-                <div id="submitSpinner" style="display: none;" class="spinner-border text-primary" role="status">
-                    <span class="visually-hidden">Отправка...</span>
+            <div class="d-flex justify-content-between">
+                <div class="col-auto">
+                    <span id="messageTextLenght" class="text-muted">0 / 128</span>
+                </div>
+                <div class="col-auto">
+                    <button id="submitButton" action="submit" class="btn btn-primary align-self-end">Отправить</button>
+                    <div id="submitSpinner" style="display: none;" class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Отправка...</span>
+                    </div>
                 </div>
             </div>
         </form>
     </div>
     <div class="col-6">
-        <h1>История сообщений</h1>
-        <div id="messageHistory">
-        </div>
+        <h1 class="display-5">История сообщений</h1>
+        <div id="messageHistory"></div>
     </div>
 </div>
 
 <script>
     ///<reference path="../../wwwroot/lib/jquery/dist/jquery.js" />
-    $("form").on("submit", (function (e) {
+    var form = $("form");
+    var textNode = $("#MessageText");
+    var textLenghtNode = $("#messageTextLenght");
+    var indexNode = $("#MessageIndex");
+
+    textNode.on("input propertychange", function () {
+        var messageLenght = $(this).val().length;
+        textLenghtNode.text(`${messageLenght} / 128`);
+    });
+
+    form.on("submit", function (e) {
         $.ajax({
             type: "post",
             url: $(this).attr("action"),
@@ -41,24 +55,26 @@
                     $("#submitButton").show();
                     $("#submitSpinner").hide();
                 }, 300);
-                
-                $("#messageHistory").append(`<div class="card mb-2"><div class="card-header">${Date(response)} &ndash; ${$("#MessageIndex").val()}</div><div class="card-body">${$("#MessageText").val()}</div></div>`);
 
-                var newIndex = parseInt($("#MessageIndex").val()) + 1;
+                $("#messageHistory").append(`<div class="card mb-2"><div class="card-header">${new Date(response).toLocaleString(undefined, {})} &ndash; ${indexNode.val()}</div><div class="card-body">${textNode.val()}</div></div>`);
 
-                $("#MessageIndex").val(newIndex);
-                $("#MessageText").val(null);
+                var newIndex = parseInt(indexNode.val()) + 1;
+
+                indexNode.val(newIndex);
+                textNode.val(null);
+                textNode.trigger("input");
             },
             error: function (response) {
-                console.log(JSON.parse(response.responseText));
-
                 setTimeout(() => {
                     $("#submitButton").show();
                     $("#submitSpinner").hide();
                 }, 300);
+
+                textLenghtNode.text(`${Object.values(JSON.parse(response.responseText).errors)[0]}`);
+                console.log(JSON.parse(response.responseText));
             },
         });
 
         e.preventDefault();
-    }));
+    });
 </script>

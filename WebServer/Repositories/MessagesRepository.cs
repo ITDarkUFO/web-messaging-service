@@ -2,6 +2,7 @@
 using SharedLibrary.Models;
 using SharedLibrary.DTOs;
 using SharedLibrary.Resources;
+using System.Text.Encodings.Web;
 
 namespace WebServer.Repositories
 {
@@ -43,9 +44,10 @@ namespace WebServer.Repositories
             using var command = _dataSource
                 .CreateCommand("INSERT INTO messages (messagetext, messagetimestamp, messageindex) VALUES (@messageText, @messageTime, @messageIndex);");
 
+            HtmlEncoder encoder = HtmlEncoder.Default;
             var sendingTime = DateTime.Now;
             command.Parameters.AddWithValue("messageTime", NpgsqlTypes.NpgsqlDbType.Timestamp, sendingTime);
-            command.Parameters.AddWithValue("messageText", NpgsqlTypes.NpgsqlDbType.Text, message.MessageText);
+            command.Parameters.AddWithValue("messageText", NpgsqlTypes.NpgsqlDbType.Text, encoder.Encode(message.MessageText));
             command.Parameters.AddWithValue("messageIndex", NpgsqlTypes.NpgsqlDbType.Integer, message.MessageIndex);
 
             try
