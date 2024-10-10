@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Localization;
 using SharedLibrary.Models;
 using WebServer.Repositories;
 

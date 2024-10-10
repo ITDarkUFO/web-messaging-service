@@ -1,14 +1,16 @@
 ﻿using Npgsql;
-using SharedLibrary.Models;
 using SharedLibrary.DTOs;
+using SharedLibrary.Models;
 using SharedLibrary.Resources;
 using System.Text.Encodings.Web;
+using WebServer.Services;
 
 namespace WebServer.Repositories
 {
-    public class MessagesRepository(ILogger<MessagesRepository> logger, NpgsqlDataSource dataSource)
+    public class MessagesRepository(ILogger<MessagesRepository> logger, MessageEventAggregator eventAggregator, NpgsqlDataSource dataSource)
     {
         private readonly ILogger<MessagesRepository> _logger = logger;
+        private readonly MessageEventAggregator _eventAggregator = eventAggregator;
         private readonly NpgsqlDataSource _dataSource = dataSource;
 
         public async Task<List<ChatMessageDTO>> GetMessages(DateTime startDate, DateTime endDate)
@@ -44,15 +46,18 @@ namespace WebServer.Repositories
             using var command = _dataSource
                 .CreateCommand("INSERT INTO messages (messagetext, messagetimestamp, messageindex) VALUES (@messageText, @messageTime, @messageIndex);");
 
-            HtmlEncoder encoder = HtmlEncoder.Default;
             var sendingTime = DateTime.Now;
+            message.MessageTimestamp = sendingTime;
             command.Parameters.AddWithValue("messageTime", NpgsqlTypes.NpgsqlDbType.Timestamp, sendingTime);
+
+            HtmlEncoder encoder = HtmlEncoder.Default;
             command.Parameters.AddWithValue("messageText", NpgsqlTypes.NpgsqlDbType.Text, encoder.Encode(message.MessageText));
             command.Parameters.AddWithValue("messageIndex", NpgsqlTypes.NpgsqlDbType.Integer, message.MessageIndex);
 
             try
             {
                 await command.ExecuteNonQueryAsync();
+                _eventAggregator.RaiseMessageReceived(message);
             }
             catch (Exception ex)
             {

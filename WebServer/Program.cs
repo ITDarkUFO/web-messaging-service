@@ -1,9 +1,8 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
-using System.Reflection;
-using WebServer.Repositories;
+﻿using Microsoft.AspNetCore.Mvc;
 using SharedLibrary.Resources;
+using System.Diagnostics;
+using WebServer.Repositories;
+using WebServer.Services;
 using static System.Net.Mime.MediaTypeNames;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -37,6 +36,7 @@ builder.Services.AddControllers()
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
+builder.Services.AddAutoMapper(typeof(Program));
 
 var connectionString = Environment.GetEnvironmentVariable("ASPNETCORE_WEBSERVER_CONNECTIONSTRING");
 
@@ -55,7 +55,10 @@ builder.Services
                 sb.EnableParameterLogging();
         });
 
+builder.Services.AddSingleton<MessageEventAggregator>();
 builder.Services.AddScoped<MessagesRepository>();
+builder.Services.AddSingleton<WebServer.Services.WebSocketManager>();
+builder.Services.AddHostedService<WebSocketHostedService>();
 
 builder.Services.AddCors(options =>
 {
