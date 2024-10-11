@@ -12,9 +12,9 @@ namespace WebServer.Services
 
         public async Task SendMessageToClientAsync(WebSocket client, ChatMessageDTO message)
         {
-            if (client.State == WebSocketState.Open)
+            try
             {
-                try
+                if (client.State == WebSocketState.Open)
                 {
                     var serializedMessage = JsonSerializer.Serialize(message);
                     var buffer = Encoding.UTF8.GetBytes(serializedMessage);
@@ -22,19 +22,19 @@ namespace WebServer.Services
 
                     await client.SendAsync(segment, WebSocketMessageType.Text, true, CancellationToken.None);
                 }
-                catch (WebSocketException ex)
+                else
                 {
-                    _logger.LogWarning($"WebSocket error: {ex.Message}");
                     RemoveClient(client);
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError($"Unexpected error: {ex.Message}");
-                    RemoveClient(client);
-                }
+                }    
             }
-            else
+            catch (WebSocketException ex)
             {
+                _logger.LogWarning($"WebSocket error: {ex.Message}");
+                RemoveClient(client);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Unexpected error: {ex.Message}");
                 RemoveClient(client);
             }
         }
