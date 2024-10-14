@@ -1,4 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Formatters;
+using Microsoft.Extensions.Logging.Configuration;
+using Microsoft.Extensions.Logging.Console;
 using SharedLibrary.Resources;
 using System.Diagnostics;
 using WebServer.Repositories;
@@ -8,7 +11,11 @@ using static System.Net.Mime.MediaTypeNames;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Logging.ClearProviders();
-builder.Logging.AddConsole();
+builder.Logging.AddConsole(options =>
+{
+    options.TimestampFormat = "[dd:MM:yy HH:mm:ss:fff] ";
+    options.UseUtcTimestamp = true;
+});
 
 builder.Services.AddControllers()
     .AddMvcLocalization()
@@ -57,6 +64,7 @@ builder.Services
 
 builder.Services.AddSingleton<MessageEventAggregator>();
 builder.Services.AddScoped<MessagesRepository>();
+builder.Services.AddSingleton<WebSocketLogger>();
 builder.Services.AddSingleton<WebServer.Services.WebSocketManager>();
 builder.Services.AddHostedService<WebSocketHostedService>();
 
@@ -65,6 +73,8 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllCors",
                       builder =>
                       {
+                          builder.AllowAnyHeader();
+                          builder.AllowAnyMethod();
                           builder.AllowAnyOrigin();
                       });
 });

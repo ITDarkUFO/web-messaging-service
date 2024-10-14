@@ -1,14 +1,16 @@
 ﻿using SharedLibrary.DTOs;
+using System.Collections.Concurrent;
 using System.Net.WebSockets;
 using System.Text;
 using System.Text.Json;
 
 namespace WebServer.Services
 {
-    public class WebSocketManager(ILogger<WebSocketManager> logger)
+    public class WebSocketManager(ILogger<WebSocketManager> logger, WebSocketLogger webSocketLogger)
     {
-        private readonly List<WebSocket> _clients = [];
+        private readonly ConcurrentDictionary<WebSocket, Guid> _clients = [];
         private readonly ILogger<WebSocketManager> _logger = logger;
+        private readonly WebSocketLogger _webSocketLogger = webSocketLogger;
 
         public async Task SendMessageToClientAsync(WebSocket client, ChatMessageDTO message)
         {
@@ -25,7 +27,7 @@ namespace WebServer.Services
                 else
                 {
                     RemoveClient(client);
-                }    
+                }
             }
             catch (WebSocketException ex)
             {
@@ -43,12 +45,26 @@ namespace WebServer.Services
         {
             foreach (var client in _clients.ToList())
             {
-                await SendMessageToClientAsync(client, message);
+                await SendMessageToClientAsync(client.Key, message);
             }
         }
 
-        public void AddClient(WebSocket client) => _clients.Add(client);
+        public void AddClient(WebSocket client, HttpContext context)
+        {
+            var sessionId = Guid.NewGuid();
 
-        public void RemoveClient(WebSocket client) => _clients.Remove(client);
+            if (_clients.TryAdd(client, sessionId))
+            {
+                _webSocketLogger.LogConnection(context, sessionId);
+            }
+        }
+
+        public void RemoveClient(WebSocket client)
+        {
+            if (_clients.TryRemove(client, out var sessionId))
+            {
+                _webSocketLogger.LogDisconnection(sessionId);
+            }
+        }
     }
 }

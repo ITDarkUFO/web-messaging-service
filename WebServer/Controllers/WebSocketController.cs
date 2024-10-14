@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Net.WebSockets;
+using System.Text;
 
 namespace WebServer.Controllers
 {
@@ -15,7 +16,7 @@ namespace WebServer.Controllers
             if (HttpContext.WebSockets.IsWebSocketRequest)
             {
                 _webSocket = await HttpContext.WebSockets.AcceptWebSocketAsync();
-                _webSocketManager.AddClient(_webSocket);
+                _webSocketManager.AddClient(_webSocket, HttpContext);
 
                 try
                 {
