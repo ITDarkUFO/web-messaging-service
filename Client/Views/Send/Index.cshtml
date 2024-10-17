@@ -28,53 +28,7 @@
     </div>
 </div>
 
-<script>
-    ///<reference path="../../wwwroot/lib/jquery/dist/jquery.js" />
-    var form = $("form");
-    var textNode = $("#MessageText");
-    var textLenghtNode = $("#messageTextLenght");
-    var indexNode = $("#MessageIndex");
-
-    textNode.on("input propertychange", function () {
-        var messageLenght = $(this).val().length;
-        textLenghtNode.text(`${messageLenght} / 128`);
-    });
-
-    form.on("submit", function (e) {
-        $.ajax({
-            type: "post",
-            url: $(this).attr("action"),
-            crossDomain: true,
-            data: $(this).serialize(),
-            beforeSend: function () {
-                $("#submitButton").hide();
-                $("#submitSpinner").show();
-            },
-            success: function (response) {
-                setTimeout(() => {
-                    $("#submitButton").show();
-                    $("#submitSpinner").hide();
-                }, 300);
-
-                $("#messageHistory").append(`<div class="card mb-2"><div class="card-header">${new Date(response).toLocaleString(undefined, {})} &ndash; ${indexNode.val()}</div><div class="card-body">${textNode.val()}</div></div>`);
-
-                var newIndex = parseInt(indexNode.val()) + 1;
-
-                indexNode.val(newIndex);
-                textNode.val(null);
-                textNode.trigger("input");
-            },
-            error: function (response) {
-                setTimeout(() => {
-                    $("#submitButton").show();
-                    $("#submitSpinner").hide();
-                }, 300);
-
-                textLenghtNode.text(`${Object.values(JSON.parse(response.responseText).errors)[0]}`);
-                console.log(JSON.parse(response.responseText));
-            },
-        });
-
-        e.preventDefault();
-    });
-</script>
+@section Scripts {
+    <script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
+    <script src="~/js/submitForm.js"></script>
+}
