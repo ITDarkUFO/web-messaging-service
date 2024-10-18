@@ -1,6 +1,7 @@
 CREATE TABLE IF NOT EXISTS messages (
     id SERIAL PRIMARY KEY,
-    messagetext VARCHAR(128) NOT NULL,
+    messagetext TEXT NOT NULL
+	CONSTRAINT chk_text_message_length CHECK (char_length(messagetext) <= 128),
     messageTimestamp TIMESTAMP,
     MessageIndex INTEGER NOT NULL
     CONSTRAINT chk_positive_index CHECK (MessageIndex >= 0)

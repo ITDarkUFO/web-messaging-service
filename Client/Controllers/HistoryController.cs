@@ -1,9 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
 
 namespace Client.Controllers
 {
-    public class HomeController : Controller
+    public class HistoryController : Controller
     {
         public IActionResult Index()
         {

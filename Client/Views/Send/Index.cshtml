@@ -1,34 +1,36 @@
 ﻿@model SharedLibrary.Models.ChatMessage
 
 <div class="row">
-    <div class="col-6">
+    <div class="col-12 col-xl-6 mb-5 mb-xl-0">
         <h1 class="display-5">Отправка сообщений</h1>
         <form method="post" action="@ViewData["URL"]/messages?culture=ru" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input hidden asp-for="MessageIndex" value="0" class="form-control" />
-            <div class="form-floating mb-2">
+            <div class="form-floating">
                 <textarea asp-for="MessageText" required maxlength="128" class="form-control" style="min-height: 8em; resize: none;" placeholder="Введите сообщение"></textarea>
                 <label asp-for="MessageText">Введите сообщение</label>
             </div>
-            <div class="d-flex justify-content-between">
-                <div class="col-auto">
+            <div id="formErrors" class="mt-1" style="min-height: calc(.875rem + .5rem); height: auto;"></div>
+            <div class="d-flex justify-content-between mt-1">
+                <div class="col">
                     <span id="messageTextLenght" class="text-muted">0 / 128</span>
                 </div>
-                <div class="col-auto">
-                    <button id="submitButton" action="submit" class="btn btn-primary align-self-end">Отправить</button>
+                <div class="col-auto d-flex align-items-center gap-2">
                     <div id="submitSpinner" style="display: none;" class="spinner-border text-primary" role="status">
                         <span class="visually-hidden">Отправка...</span>
                     </div>
+                    <button id="submitButton" action="submit" class="btn btn-primary align-self-end">Отправить</button>
                 </div>
             </div>
         </form>
     </div>
-    <div class="col-6">
+    <div class="col-12 col-xl-6">
         <h1 class="display-5">История сообщений</h1>
         <div id="messageHistory"></div>
     </div>
 </div>
 
 @section Scripts {
-    <script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
-    <script src="~/js/submitForm.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.js" asp-append-version="true"></script>
+    <script src="~/js/submitForm.js" asp-append-version="true"></script>
 }

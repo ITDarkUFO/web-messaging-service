@@ -2,12 +2,13 @@
 
 namespace Client.Controllers
 {
-    public class WebSocketController(ILogger<WebSocketController> logger) : Controller
+    public class WebSocketController(IConfiguration configuration) : Controller
     {
-        private readonly ILogger<WebSocketController> _logger = logger;
+        private readonly IConfiguration _configuration = configuration;
 
         public IActionResult Index()
         {
+            ViewBag.URL = _configuration.GetValue<string>("SERVER_URL");
             return View();
         }
     }

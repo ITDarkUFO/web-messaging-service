@@ -1,12 +1,22 @@
-﻿@{
+﻿@model SharedLibrary.Models.ChatMessage
+@{
     ViewData["Title"] = "WebSocket клиент";
 }
 
-<h1>WebSocket клиент</h1>
-<span id="connectionStatus"></span>
-
+<div class="row">
+    <div class="col-12 col-xl-6 mb-5 mb-xl-0">
+        <h1 class="display-5">WebSocket клиент</h1>
+        <span id="connectionStatus" class="d-inline-block text-muted mb-2"></span>
+    </div>
+    <div class="col-12 col-xl-6">
+        <h1 class="display-5">История сообщений</h1>
+        <div id="messageHistory"></div>
+    </div>
+</div>
 
 @section Scripts
 {
     <script src="~/js/webSocket.js" asp-append-version="true"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.js" asp-append-version="true"></script>
+    <script src="~/js/submitForm.js" asp-append-version="true"></script>
 }

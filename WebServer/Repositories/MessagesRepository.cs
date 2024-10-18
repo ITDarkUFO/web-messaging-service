@@ -49,9 +49,7 @@ namespace WebServer.Repositories
             var sendingTime = DateTime.Now;
             message.MessageTimestamp = sendingTime;
             command.Parameters.AddWithValue("messageTime", NpgsqlTypes.NpgsqlDbType.Timestamp, sendingTime);
-
-            HtmlEncoder encoder = HtmlEncoder.Default;
-            command.Parameters.AddWithValue("messageText", NpgsqlTypes.NpgsqlDbType.Text, encoder.Encode(message.MessageText));
+            command.Parameters.AddWithValue("messageText", NpgsqlTypes.NpgsqlDbType.Text, message.MessageText);
             command.Parameters.AddWithValue("messageIndex", NpgsqlTypes.NpgsqlDbType.Integer, message.MessageIndex);
 
             try

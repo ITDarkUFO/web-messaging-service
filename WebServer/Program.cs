@@ -17,6 +17,7 @@ builder.Logging.AddConsole(options =>
     options.UseUtcTimestamp = true;
 });
 
+builder.Services.Configure<RouteOptions>(options => options.LowercaseUrls = true);
 builder.Services.AddControllers()
     .AddMvcLocalization()
     .AddDataAnnotationsLocalization()
