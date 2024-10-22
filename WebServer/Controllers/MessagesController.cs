@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SharedLibrary.Models;
+using System.Text.Json;
 using WebServer.Repositories;
 
 namespace WebServer.Controllers
@@ -14,7 +15,7 @@ namespace WebServer.Controllers
         public async Task<IActionResult> GetMessages(DateTime startDate, DateTime endDate)
         {
             var messages = await _messagesRepository.GetMessages(startDate, endDate);
-            return Ok(messages);
+            return Ok(JsonSerializer.Serialize(messages));
         }
 
         [HttpPost]

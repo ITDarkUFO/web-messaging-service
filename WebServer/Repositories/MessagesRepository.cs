@@ -46,7 +46,7 @@ namespace WebServer.Repositories
             using var command = _dataSource
                 .CreateCommand("INSERT INTO messages (messagetext, messagetimestamp, messageindex) VALUES (@messageText, @messageTime, @messageIndex);");
 
-            var sendingTime = DateTime.Now;
+            var sendingTime = DateTimeOffset.Parse(DateTime.UtcNow.ToString(), null).DateTime;
             message.MessageTimestamp = sendingTime;
             command.Parameters.AddWithValue("messageTime", NpgsqlTypes.NpgsqlDbType.Timestamp, sendingTime);
             command.Parameters.AddWithValue("messageText", NpgsqlTypes.NpgsqlDbType.Text, message.MessageText);

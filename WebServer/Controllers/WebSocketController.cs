@@ -15,6 +15,9 @@ namespace WebServer.Controllers
         {
             if (HttpContext.WebSockets.IsWebSocketRequest)
             {
+                var buffer = new byte[1024 * 2];
+                var cancellationToken = CancellationToken.None;
+
                 _webSocket = await HttpContext.WebSockets.AcceptWebSocketAsync();
                 _webSocketManager.AddClient(_webSocket, HttpContext);
 
@@ -22,12 +25,11 @@ namespace WebServer.Controllers
                 {
                     while (_webSocket.State == WebSocketState.Open)
                     {
-                        var buffer = new byte[1024 * 2];
-                        var result = await _webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
+                        var result = await _webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), cancellationToken);
 
                         if (result.MessageType == WebSocketMessageType.Close)
                         {
-                            await _webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closing", CancellationToken.None);
+                            await _webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closing", cancellationToken);
                             break;
                         }
                     }

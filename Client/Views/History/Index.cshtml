@@ -1,11 +1,11 @@
-﻿@model SharedLibrary.Models.ChatMessage
+﻿@model SharedLibrary.DTOs.ChatMessageDTO
 @{
-    ViewData["Title"] = "WebSocket";
+    ViewData["Title"] = "История сообщений";
 }
 
 <div class="row">
     <div class="col-12 col-xl-6 mb-5 mb-xl-0">
-        <h1 class="display-5">WebSocket клиент</h1>
+        <h1 class="display-5">Клиент истории сообщений</h1>
         <span id="connectionStatus" class="d-inline-block text-muted mb-2"></span>
     </div>
     <div class="col-12 col-xl-6">
@@ -14,7 +14,6 @@
     </div>
 </div>
 
-@section Scripts
-{
-    <script src="~/js/webSocket.js" asp-append-version="true"></script>
+@section Scripts {
+    <script src="~/js/messageHistory.js" asp-append-version="true"></script>
 }
