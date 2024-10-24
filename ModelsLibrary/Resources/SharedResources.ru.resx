@@ -118,18 +118,21 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="RequiredError" xml:space="preserve">
-    <value>{0} не может быть пустым.</value>
+    <value>{0} не может быть пустым</value>
   </data>
   <data name="RangeError" xml:space="preserve">
-    <value>{0} должно быть больше {1} и меньше {2}.</value>
+    <value>{0} должно быть больше {1} и меньше {2}</value>
   </data>
   <data name="ValidationError" xml:space="preserve">
-    <value>Произошла одна или несколько ошибок валидации.</value>
+    <value>Произошла одна или несколько ошибок валидации</value>
   </data>
   <data name="ValidationErrorDetails" xml:space="preserve">
-    <value>Пожалуйста, проверьте введенные данные и повторите попытку.</value>
+    <value>Пожалуйста, проверьте введенные данные и повторите попытку</value>
   </data>
   <data name="DbCommandExecutionError" xml:space="preserve">
-    <value>Возникла неизвестная ошибка при выполнении команды.</value>
+    <value>Возникла неизвестная ошибка при выполнении команды</value>
+  </data>
+  <data name="ExceptionError" xml:space="preserve">
+    <value>Возникла неизвестная ошибка</value>
   </data>
 </root>

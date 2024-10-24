@@ -21,22 +21,33 @@ namespace WebServer.Repositories
             using var command = _dataSource
                 .CreateCommand("SELECT * FROM messages WHERE messagetimestamp >= @startDate AND messagetimestamp <= @endDate;");
 
-            command.Parameters.AddWithValue("startDate", NpgsqlTypes.NpgsqlDbType.Timestamp, startDate);
-            command.Parameters.AddWithValue("endDate", NpgsqlTypes.NpgsqlDbType.Timestamp, endDate);
+            command.Parameters.AddWithValue("startDate", NpgsqlTypes.NpgsqlDbType.TimestampTz, startDate);
+            command.Parameters.AddWithValue("endDate", NpgsqlTypes.NpgsqlDbType.TimestampTz, endDate);
 
-            using var reader = await command.ExecuteReaderAsync();
-
-            while (await reader.ReadAsync())
+            try
             {
-                messages.Add(new()
+                using var reader = await command.ExecuteReaderAsync();
+                while (await reader.ReadAsync())
                 {
-                    MessageText = reader.GetString(1),
-                    MessageTimestamp = reader.GetDateTime(2),
-                    MessageIndex = reader.GetInt32(3)
-                });
+                    messages.Add(new()
+                    {
+                        MessageText = reader.GetString(1),
+                        MessageTimestamp = reader.GetDateTime(2),
+                        MessageIndex = reader.GetInt32(3)
+                    });
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                _logger.LogCritical(ex, SharedResources.DbCommandExecutionError);
+                throw;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogCritical(ex, SharedResources.ExceptionError);
+                throw;
             }
 
-            await connection.CloseAsync();
             return messages;
         }
 
@@ -46,9 +57,9 @@ namespace WebServer.Repositories
             using var command = _dataSource
                 .CreateCommand("INSERT INTO messages (messagetext, messagetimestamp, messageindex) VALUES (@messageText, @messageTime, @messageIndex);");
 
-            var sendingTime = DateTimeOffset.Parse(DateTime.UtcNow.ToString(), null).DateTime;
+            var sendingTime = DateTime.UtcNow;
             message.MessageTimestamp = sendingTime;
-            command.Parameters.AddWithValue("messageTime", NpgsqlTypes.NpgsqlDbType.Timestamp, sendingTime);
+            command.Parameters.AddWithValue("messageTime", NpgsqlTypes.NpgsqlDbType.TimestampTz, sendingTime);
             command.Parameters.AddWithValue("messageText", NpgsqlTypes.NpgsqlDbType.Text, message.MessageText);
             command.Parameters.AddWithValue("messageIndex", NpgsqlTypes.NpgsqlDbType.Integer, message.MessageIndex);
 
@@ -57,13 +68,17 @@ namespace WebServer.Repositories
                 await command.ExecuteNonQueryAsync();
                 _eventAggregator.RaiseMessageReceived(message);
             }
-            catch (Exception ex)
+            catch (NpgsqlException ex)
             {
                 _logger.LogCritical(ex, SharedResources.DbCommandExecutionError);
                 throw;
             }
+            catch (Exception ex)
+            {
+                _logger.LogCritical(ex, SharedResources.ExceptionError);
+                throw;
+            }
 
-            await connection.CloseAsync();
             return sendingTime;
         }
     }

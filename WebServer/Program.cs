@@ -18,6 +18,7 @@ builder.Logging.AddConsole(options =>
 });
 
 builder.Services.Configure<RouteOptions>(options => options.LowercaseUrls = true);
+
 builder.Services.AddControllers()
     .AddMvcLocalization()
     .AddDataAnnotationsLocalization()

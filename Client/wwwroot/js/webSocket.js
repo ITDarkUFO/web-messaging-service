@@ -1,9 +1,12 @@
-    var url = new URL("wss://localhost:7061/ws");
 ﻿///<reference path="../../wwwroot/lib/jquery/dist/jquery.js" />
+
+import { displayMessage } from "./modules/messenger.js";
+
 var connectionStatus = $("#connectionStatus");
 var messageHistory = $("#messageHistory");
 
 $(function () {
+    var url = new URL("wss://localhost:7061/ws");
     var webSocket = new WebSocket(url);
     
     webSocket.onopen = onOpen;
@@ -20,18 +23,13 @@ function onOpen() {
 }
 
 function onMessage(event) {
-    var messageData = JSON.parse(event.data);
-    console.log(messageData);
+    var message = JSON.parse(event.data);
+    console.debug("Получено сообщение:", message);
 
-    var message = $("<div></div>").addClass(["card", "mb-2"]);
-    var messageHeader = $("<div></div>").addClass("card-header").text(`${new Date(messageData.MessageTimestamp).toLocaleString(undefined, {})} \u2013 ${messageData.MessageIndex}`);
-    var messageBody = $("<div></div>").addClass("card-body").text(`${messageData.MessageText}`);
-
-    message.append(messageHeader).append(messageBody).hide().fadeIn(500);
-    messageHistory.append(message);
+    displayMessage(message, messageHistory);
 }
 
 function onError(event) {
     console.error("Произошла ошибка:", event);
-    connectionStatus.text("Не удалось подключиться к серверу.");
+    connectionStatus.text("Не удалось подключиться к серверу");
 };

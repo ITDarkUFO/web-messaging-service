@@ -1,6 +1,8 @@
 ﻿///<reference path="../../wwwroot/lib/jquery/dist/jquery.js" />
 ///<reference path="../../wwwroot/lib/jquery-validation/dist/jquery.validate.js" />
 
+import { displayMessage } from "./modules/messenger.js";
+
 var form = $("form");
 var textNode = $("#MessageText");
 var textLenghtNode = $("#messageTextLenght");
@@ -60,6 +62,7 @@ $(function () {
                     textNode.attr("disabled", true);
                     submitButton.attr("disabled", true);
                     submitSpinner.show();
+                    console.debug("Отправка сообщения на сервер...");
                 },
                 success: function (response) {
                     setTimeout(() => {
@@ -68,15 +71,19 @@ $(function () {
                         submitSpinner.hide();
                     }, 300);
 
-                    var message = $("<div></div>").addClass(["card", "mb-2"]);
-                    var messageHeader = $("<div></div>").addClass("card-header").text(`${new Date(response).toLocaleString(undefined, {})} \u2013 ${indexNode.val()}`);
-                    var messageBody = $("<div></div>").addClass("card-body").text(`${textNode.val()}`);
+                    console.debug("Сообщение успешно отправлено");
 
-                    message.append(messageHeader).append(messageBody).hide().fadeIn(500);
-                    messageHistory.append(message);
+                    var message = {
+                        "MessageIndex": indexNode.val(),
+                        "MessageTimestamp": response,
+                        "MessageText": textNode.val()
+                    };
+
+                    console.debug(message);
+
+                    displayMessage(message, messageHistory);
 
                     var newIndex = parseInt(indexNode.val()) + 1;
-
                     indexNode.val(newIndex);
                     textNode.val(null);
 
@@ -103,11 +110,11 @@ $(function () {
                     else {
                         var error = $("<div></div>")
                             .addClass("text-danger")
-                            .text(JSON.parse(response.responseText))
+                            .text(response.responseText)
                             .css({ "font-size": ".875em" });
                         formErrors.append(error);
 
-                        console.log(JSON.parse(response.responseText));
+                        console.error(response.responseText);
                     }
 
                     textNode.valid();
