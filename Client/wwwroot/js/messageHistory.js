@@ -39,6 +39,7 @@ $(function () {
 
             displayMessages(messages, messageHistory);
 
+            console.debug("Сообщения загружены");
             connectionStatus.text("Сообщения загружены");
         },
         error: function (response) {

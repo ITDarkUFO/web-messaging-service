@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Net.WebSockets;
-using System.Text;
 
 namespace WebServer.Controllers
 {

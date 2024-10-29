@@ -1,5 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
-using SharedLibrary.Resources;
+﻿using SharedLibrary.Resources;
+using System.ComponentModel.DataAnnotations;
 
 namespace SharedLibrary.Models
 {

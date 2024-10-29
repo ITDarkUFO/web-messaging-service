@@ -40,8 +40,8 @@ namespace WebServer.Controllers
 
             try
             {
-                var sendingTime = await _messagesRepository.SendMessage(message);
-                return Ok(sendingTime);
+                var chatMessageDTO = await _messagesRepository.SendMessage(message);
+                return Ok(JsonSerializer.Serialize(chatMessageDTO));
             }
             catch
             {

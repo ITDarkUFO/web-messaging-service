@@ -1,17 +1,18 @@
-﻿using Npgsql;
+﻿using AutoMapper;
+using Npgsql;
 using SharedLibrary.DTOs;
 using SharedLibrary.Models;
 using SharedLibrary.Resources;
-using System.Text.Encodings.Web;
 using WebServer.Services;
 
 namespace WebServer.Repositories
 {
-    public class MessagesRepository(ILogger<MessagesRepository> logger, MessageEventAggregator eventAggregator, NpgsqlDataSource dataSource)
+    public class MessagesRepository(ILogger<MessagesRepository> logger, IMapper mapper, MessageEventAggregator eventAggregator, NpgsqlDataSource dataSource)
     {
         private readonly ILogger<MessagesRepository> _logger = logger;
         private readonly MessageEventAggregator _eventAggregator = eventAggregator;
         private readonly NpgsqlDataSource _dataSource = dataSource;
+        private readonly IMapper _mapper = mapper;
 
         public async Task<List<ChatMessageDTO>> GetMessages(DateTime startDate, DateTime endDate)
         {
@@ -51,7 +52,7 @@ namespace WebServer.Repositories
             return messages;
         }
 
-        public async Task<DateTime> SendMessage(ChatMessage message)
+        public async Task<ChatMessageDTO> SendMessage(ChatMessage message)
         {
             using var connection = await _dataSource.OpenConnectionAsync();
             using var command = _dataSource
@@ -79,7 +80,7 @@ namespace WebServer.Repositories
                 throw;
             }
 
-            return sendingTime;
+            return _mapper.Map<ChatMessageDTO>(message);
         }
     }
 }
