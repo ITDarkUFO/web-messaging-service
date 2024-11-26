@@ -15,7 +15,7 @@ $(function () {
 
     console.debug(`Сообщения показываются с ${timeTenMinutesAgo.toISOString()} по ${timeNow.toISOString()}`);
 
-    var url = new URL(`https://192.168.0.102:7061/messages?startDate=${timeTenMinutesAgoISO}&endDate=${timeNowISO}`);
+    var url = new URL(`https://localhost:7061/messages?startDate=${timeTenMinutesAgoISO}&endDate=${timeNowISO}`);
 
     $.ajax({
         type: "get",
@@ -45,7 +45,7 @@ $(function () {
         error: function (response) {
             if (response.readyState == 0) {
                 console.error("Произошла ошибка при подключении к серверу.\nПроверьте соединение интернета и попробуйте еще раз.");
-                connectionStatus.error("Не удалось подключиться к серверу");
+                connectionStatus.text("Не удалось подключиться к серверу");
             }
             else {
                 console.error(response.responseText);
